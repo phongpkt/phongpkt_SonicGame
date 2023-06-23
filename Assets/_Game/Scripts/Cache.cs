@@ -19,8 +19,8 @@ public class Cache
 
     //------------------------------------------------------------------------------------------------------------
     //Cache player
-    private static Dictionary<Collider, Player> m_Player = new Dictionary<Collider, Player>();
-    public static Player GetPlayer(Collider key)
+    private static Dictionary<Collider2D, Player> m_Player = new Dictionary<Collider2D, Player>();
+    public static Player GetPlayer(Collider2D key)
     {
         if (!m_Player.ContainsKey(key))
         {
@@ -35,7 +35,6 @@ public class Cache
                 return null;
             }
         }
-
         return m_Player[key];
     }
 

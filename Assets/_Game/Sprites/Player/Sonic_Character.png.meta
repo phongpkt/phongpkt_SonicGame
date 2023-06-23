@@ -540,9 +540,9 @@ TextureImporter:
       name: Sonic_Character_39
       rect:
         serializedVersion: 2
-        x: 160
+        x: 161
         y: 716
-        width: 18
+        width: 17
         height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -561,9 +561,9 @@ TextureImporter:
       name: Sonic_Character_40
       rect:
         serializedVersion: 2
-        x: 178
+        x: 179
         y: 716
-        width: 19
+        width: 18
         height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -15246,10 +15246,10 @@ TextureImporter:
       Sonic_Character_792: -44521913
       Sonic_Character_329: -467623956
       Sonic_Character_375: 2138342421
-      Sonic_Character_162: 1702533032
+      Sonic_Character_481: 503239911
       Sonic_Character_390: -491151156
       Sonic_Character_642: -949974145
-      Sonic_Character_481: 503239911
+      Sonic_Character_162: 1702533032
       Sonic_Character_27: 430949258
       Sonic_Character_485: 2143119983
       Sonic_Character_140: -526410539

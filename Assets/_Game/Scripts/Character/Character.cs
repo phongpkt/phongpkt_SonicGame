@@ -6,9 +6,12 @@ public class Character : MonoBehaviour
 {
     [SerializeField] protected Animator anim;
     protected string currentAnim;
+
+    public bool isDead;
+
     private void Start()
     {
-        
+        OnInit();
     }
     public virtual void OnInit()
     {
@@ -16,11 +19,12 @@ public class Character : MonoBehaviour
     }
     public virtual void OnDespawn()
     {
-
+        gameObject.SetActive(false);
+        Invoke(nameof(OnInit), 1f);
     }
     public virtual void OnDeath()
     {
-
+        Invoke(nameof(OnDespawn), 1f);
     }
     #region Animation
     protected void ChangeAnim(string animName)
@@ -32,5 +36,6 @@ public class Character : MonoBehaviour
             anim.SetTrigger(currentAnim);
         }
     }
+
     #endregion
 }
