@@ -32,7 +32,7 @@ public class Zombie : Character
     public override void OnDespawn()
     {
         base.OnDespawn();
-        Destroy(gameObject);
+        Destroy(this.gameObject);
     }
     public override void OnDeath()
     {
@@ -48,7 +48,7 @@ public class Zombie : Character
     }
     private void FixedUpdate()
     {
-        if (isDead == true)
+        if (isDead)
         {
             return;
         }
@@ -123,6 +123,12 @@ public class Zombie : Character
         }
     }
     #endregion
+
+    public void OnHit()
+    {
+        isDead = true;
+        OnDeath();
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

@@ -24,7 +24,7 @@ public class Character : MonoBehaviour
     }
     public virtual void OnDeath()
     {
-        Invoke(nameof(OnDespawn), 1f);
+        Invoke(nameof(OnDespawn), 0.2f);
     }
     #region Animation
     protected void ChangeAnim(string animName)

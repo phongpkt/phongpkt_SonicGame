@@ -12,22 +12,23 @@ public class Player : Character
     [SerializeField] private CapsuleCollider2D capsuleCol;
 
     //Velocity
-    [SerializeField] private float currentSpeed;
+    private float currentSpeed;
     [SerializeField] private float moveSpeed;
-    [SerializeField] private float sprintSpeed;
-    [SerializeField] private float spiningSpeed;
+    private float sprintSpeed;
+    private float spiningSpeed;
     private float acceleration;
     private float jumpForce;
-    
+    [SerializeField] private float dieForce;
+
     //Movement
-    private float horizontal;
-    private float vertical;
+    [SerializeField] private float horizontal;
+    [SerializeField] private float vertical;
 
     //Character bool
-    [SerializeField] private bool isGrounded;
-    [SerializeField] private bool isJumping;
-    [SerializeField] private bool isSprinting;
-    [SerializeField] private bool isSpining;
+    public bool isSpining;
+    private bool isGrounded;
+    private bool isJumping;
+    private bool isSprinting;
     [SerializeField] private bool isOnSlope;
 
     //Slope
@@ -41,6 +42,7 @@ public class Player : Character
 
     //Savepoint
     private Vector3 savePoint;
+    [SerializeField] private int coin = 0;
 
     private void Awake()
     {
@@ -49,6 +51,7 @@ public class Player : Character
         moveSpeed = 500;
         acceleration = 100;
         jumpForce = 900;
+        dieForce = 900;
     }
     private void Start()
     {
@@ -58,9 +61,9 @@ public class Player : Character
     {
         base.OnInit();
         isDead = false;
-        isSprinting = false;
         rb.velocity = Vector2.zero;
-        transform.position = savePoint;
+        transform.position = new Vector3(savePoint.x, savePoint.y + 5f, savePoint.z);
+        capsuleCol.enabled = enabled;
         gameObject.SetActive(true);
     }
     private void Update()
@@ -71,85 +74,99 @@ public class Player : Character
         vertical = Input.GetAxisRaw("Vertical");
         isGrounded = CheckGrounded();
 
-        if (isGrounded)
+        //check alive
+        if (isDead)
         {
-            moveSpeed = 500;
-            //check jump
-            if (isJumping)
-            {
-                Jumping();
-                return;
-            }
-            //jump
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                Jump();
-                return;
-            }
-            //crouch
-            if (vertical < 0f)
-            {
-                Ducking();
-                return;
-            }
-            //lookup
-            if (vertical > 0f)
-            {
-                LookUp();
-                return;
-            }
-            //run
-            if (Mathf.Abs(horizontal) > 0.1f)
-            {
-                if (!isSprinting && !isSpining)
-                {
-                    ChangeAnim(Constants.ANIM_RUN);
-                }
-                else if(isSprinting && !isSpining)
-                {
-                    ChangeAnim(Constants.ANIM_SPRINT);
-                }
-                else if(!isSprinting && isSpining)
-                {
-                    ChangeAnim(Constants.ANIM_SPIN);
-                }
-            }
-            //sprint
-            if (Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                isSprinting = true;
-                return;
-            }
-            if (Input.GetKeyUp(KeyCode.LeftShift))
-            {
-                isSprinting = false;
-                return;
-            }
-            //spin
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                isSpining = true;
-                return;
-            }
-            //idle
-            if (Mathf.Abs(horizontal) == 0 && !isJumping && !isSprinting)
-            {
-                Idle();
-                return;
-            }
+            horizontal = 0;
+            return;
         }
         else
         {
-            //falling
-            if (!isDead && rb.velocity.y < 0)
+            if (isGrounded)
             {
-                Falling();
+                moveSpeed = 500;
+                //check jump
+                if (isJumping)
+                {
+                    Jumping();
+                    return;
+                }
+                //jump
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    Jump();
+                    return;
+                }
+                //crouch
+                if (vertical < 0f)
+                {
+                    Ducking();
+                    return;
+                }
+                //lookup
+                if (vertical > 0f)
+                {
+                    LookUp();
+                    return;
+                }
+                //run
+                if (Mathf.Abs(horizontal) > 0.1f)
+                {
+                    if (!isSprinting && !isSpining)
+                    {
+                        ChangeAnim(Constants.ANIM_RUN);
+                    }
+                    else if (isSprinting && !isSpining)
+                    {
+                        ChangeAnim(Constants.ANIM_SPRINT);
+                    }
+                    else if (!isSprinting && isSpining)
+                    {
+                        ChangeAnim(Constants.ANIM_SPIN);
+                    }
+                }
+                //sprint
+                if (Input.GetKeyDown(KeyCode.LeftShift))
+                {
+                    isSprinting = true;
+                    return;
+                }
+                if (Input.GetKeyUp(KeyCode.LeftShift))
+                {
+                    isSprinting = false;
+                    return;
+                }
+                //spin
+                if (Input.GetKeyDown(KeyCode.C))
+                {
+                    isSpining = true;
+                    return;
+                }
+                //idle
+                if (Mathf.Abs(horizontal) == 0 && !isJumping && !isSprinting)
+                {
+                    Idle();
+                    return;
+                }
+            }
+            else
+            {
+                //falling
+                //#TODO: Neu falling thi se khong nhay khi die
+                if (rb.velocity.y < 0)
+                {
+                    Falling();
+                }
             }
         }
     }
     private void FixedUpdate()
     {
         CheckSlope();
+        if (isDead)
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
         if (Mathf.Abs(horizontal) > 0.1f)
         {
             //moveSpeed
@@ -171,6 +188,12 @@ public class Player : Character
     public void SetMove(float horizontal)
     {
         this.horizontal = horizontal;
+    }
+    public void StopMoving()
+    {
+        isSpining = false;
+        horizontal = 0;
+        rb.velocity = Vector2.zero;
     }
     //public void CalculateSpeed()
     //{
@@ -209,6 +232,10 @@ public class Player : Character
     #region Falling
     public void Falling()
     {
+        if (isDead)
+        {
+            return;
+        }
         isSprinting = false;
         isSpining = false;
         isJumping = false;
@@ -267,11 +294,22 @@ public class Player : Character
     }
     #endregion
 
+    #region Hit
+    public void Hit()
+    {
+        //Neu di vao detect player cua enemy thi se bi push back + drop coin
+        //Khi dang trong spinning thi se attack duoc va khong bi push back -> tuy nhien dung phai enemy thi se tat spinning
+    }
+    #endregion
+
     #region Die
     public void Die()
     {
         isDead = true;
         ChangeAnim(Constants.ANIM_DEAD);
+        rb.AddForce(dieForce * Vector2.up);
+        capsuleCol.enabled = !capsuleCol.enabled;
+        Invoke(nameof(OnInit), 1.5f);
     }
     #endregion
 
@@ -352,10 +390,16 @@ public class Player : Character
     #endregion
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.CompareTag(Constants.COIN))
+        {
+            coin++;
+            Destroy(collision.gameObject);
+            //PlayerPrefs.SetInt("coin", coin);
+            //UIManager.instance.SetCoin(coin);
+        }
         if (collision.CompareTag(Constants.DEADZONE))
         {
             Die();
-            Invoke(nameof(OnInit), 1.5f);
         }
     }
 }

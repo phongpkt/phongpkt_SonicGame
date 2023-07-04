@@ -18,11 +18,14 @@ public class Constants
     //Player tags
     public const string PLAYER_TAG = "Player";
     public const string DEADZONE = "DeadZone";
+    public const string COIN = "Coin";
 
     //Enemy Tags
+    public const string TRAPS = "Traps";
     public const string ENEMY_WALL = "EnemyWalls";
     public const string Z_ANIM_IDLE = "Idle";
     public const string Z_ANIM_MOVING = "Moving";
     public const string Z_ANIM_CHASING = "Chasing";
+
 
 }
