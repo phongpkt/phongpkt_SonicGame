@@ -18,7 +18,8 @@ public class Player : Character
     private float spiningSpeed;
     private float acceleration;
     private float jumpForce;
-    [SerializeField] private float dieForce;
+    private float pushbackForce;
+    private float dieForce;
 
     //Movement
     [SerializeField] private float horizontal;
@@ -50,6 +51,7 @@ public class Player : Character
         sprintSpeed = 1000;
         moveSpeed = 500;
         acceleration = 100;
+        pushbackForce = 300;
         jumpForce = 900;
         dieForce = 900;
     }
@@ -194,6 +196,7 @@ public class Player : Character
         isSpining = false;
         horizontal = 0;
         rb.velocity = Vector2.zero;
+        rb.AddForce(Vector2.left * pushbackForce);
     }
     //public void CalculateSpeed()
     //{

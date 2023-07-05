@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
-public class Z_MoveState : Z_IState
+public class Z_MoveState : IState
 {
     float randomTime;
     float timer;
-    public void OnEnter(Zombie zombie)
+    public void OnEnter(Enemy zombie)
     {
         timer = 0;
         randomTime = Random.Range(4f, 6f);
     }
-    public void OnExecute(Zombie zombie)
+    public void OnExecute(Enemy zombie)
     {
         timer += Time.deltaTime;
         if (zombie.Target != null)
@@ -31,7 +31,7 @@ public class Z_MoveState : Z_IState
             }
         }
     }
-    public void OnExit(Zombie zombie)
+    public void OnExit(Enemy zombie)
     {
 
     }

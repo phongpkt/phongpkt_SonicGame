@@ -27,5 +27,9 @@ public class Constants
     public const string Z_ANIM_MOVING = "Moving";
     public const string Z_ANIM_CHASING = "Chasing";
 
+    public const string S_ANIM_IDLE = "Idle";
+    public const string S_ANIM_WALK = "Walk";
+    public const string S_ANIM_CHASE = "Spin";
+
 
 }

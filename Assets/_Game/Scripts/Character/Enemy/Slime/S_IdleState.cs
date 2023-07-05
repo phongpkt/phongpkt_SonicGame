@@ -2,25 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Z_IdleState : Z_IState
+public class S_IdleState : IState
 {
     float randomTime;
     float timer;
-    public void OnEnter(Zombie zombie) 
+    public void OnEnter(Enemy slime)
     {
-        zombie.isMoving = false;
+        slime.isMoving = false;
         timer = 0;
         randomTime = Random.Range(2f, 3f);
     }
-    public void OnExecute(Zombie zombie)
+    public void OnExecute(Enemy slime)
     {
         timer += Time.deltaTime;
         if (timer > randomTime)
         {
-            zombie.ChangeState(new Z_MoveState());
+            slime.ChangeState(new S_PatrolState());
         }
     }
-    public void OnExit(Zombie zombie)
+    public void OnExit(Enemy slime)
     {
 
     }

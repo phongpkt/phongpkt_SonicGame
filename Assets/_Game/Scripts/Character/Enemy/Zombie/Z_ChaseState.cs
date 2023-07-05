@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Z_ChaseState : Z_IState
+public class Z_ChaseState : IState
 {
     float timer;
-
-    public void OnEnter(Zombie zombie)
+    public void OnEnter(Enemy zombie)
     {
         if (zombie.Target != null)
         {
@@ -20,7 +19,7 @@ public class Z_ChaseState : Z_IState
         }
         timer = 0;
     }
-    public void OnExecute(Zombie zombie)
+    public void OnExecute(Enemy zombie)
     {
         timer += Time.deltaTime;
         if (timer >= 1.5f)
@@ -28,7 +27,7 @@ public class Z_ChaseState : Z_IState
             zombie.ChangeState(new Z_MoveState());
         }
     }
-    public void OnExit(Zombie zombie)
+    public void OnExit(Enemy zombie)
     {
 
     }

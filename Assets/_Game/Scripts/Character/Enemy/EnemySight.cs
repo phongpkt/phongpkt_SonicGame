@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEditor.U2D.Path;
 using UnityEngine;
 
-public class ZombieSight : MonoBehaviour
+public class EnemySight : MonoBehaviour
 {
-    public Zombie enemy;
+    public Enemy enemy;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(Constants.PLAYER_TAG))
