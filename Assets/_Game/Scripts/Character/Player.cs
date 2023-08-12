@@ -7,16 +7,22 @@ using Input = UnityEngine.Input;
 
 public class Player : Character
 {
+    public ParticleSystem dust;
+
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private CapsuleCollider2D capsuleCol;
 
+    //Camera
+    public Transform camTarget;
+    public float aheadAmount, aheadSpeed;
+
     //Velocity
-    private float currentSpeed;
+    //private float currentSpeed;
     [SerializeField] private float moveSpeed;
-    private float sprintSpeed;
-    private float spiningSpeed;
-    private float acceleration;
+    [SerializeField] private float sprintSpeed;
+    [SerializeField] private float spiningSpeed;
+    //private float acceleration;
     private float jumpForce;
     private float pushbackForce;
     private float dieForce;
@@ -41,18 +47,19 @@ public class Player : Character
     private Vector2 capsuleColliderSize;
     private Vector2 slopeNormalPerp;
 
-    //Savepoint
+    //Savepoint + Coins + Lives
     private Vector3 savePoint;
-    [SerializeField] private int coin = 0;
+    public int coin = 0;
+    public int lives = 3;
+    private float resetSpeedTimer = 10f;
 
     private void Awake()
     {
         spiningSpeed = 1500;
         sprintSpeed = 1000;
         moveSpeed = 500;
-        acceleration = 100;
         pushbackForce = 300;
-        jumpForce = 900;
+        jumpForce = 700;
         dieForce = 900;
     }
     private void Start()
@@ -75,7 +82,8 @@ public class Player : Character
         // -1 <- vertical <- 1
         vertical = Input.GetAxisRaw("Vertical");
         isGrounded = CheckGrounded();
-
+        //move camera point
+        MoveCameraPoint();
         //check alive
         if (isDead)
         {
@@ -86,13 +94,6 @@ public class Player : Character
         {
             if (isGrounded)
             {
-                moveSpeed = 500;
-                //check jump
-                if (isJumping)
-                {
-                    Jumping();
-                    return;
-                }
                 //jump
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
@@ -114,6 +115,7 @@ public class Player : Character
                 //run
                 if (Mathf.Abs(horizontal) > 0.1f)
                 {
+                    CreateDust();
                     if (!isSprinting && !isSpining)
                     {
                         ChangeAnim(Constants.ANIM_RUN);
@@ -191,6 +193,7 @@ public class Player : Character
     {
         this.horizontal = horizontal;
     }
+
     public void StopMoving()
     {
         isSpining = false;
@@ -212,6 +215,20 @@ public class Player : Character
     //}
     #endregion
 
+    #region CameraTarget
+    public void MoveCameraPoint()
+    {
+        if (horizontal != 0)
+        {
+            camTarget.localPosition = new Vector3(Mathf.Lerp(camTarget.localPosition.x, aheadAmount * horizontal, aheadSpeed * Time.deltaTime), camTarget.localPosition.y, camTarget.localPosition.z);
+        }
+        else
+        {
+            camTarget.localPosition = Vector3.zero;
+        }
+    }
+    #endregion
+
     #region Jump
     public void Jump()
     {
@@ -223,12 +240,6 @@ public class Player : Character
         isJumping = true;
         ChangeAnim(Constants.ANIM_JUMP);
         rb.AddForce(jumpForce * Vector2.up);
-    }
-    public void Jumping()
-    {
-        moveSpeed = 300;
-        isSprinting = false;
-        isSpining = false;
     }
     #endregion
 
@@ -300,8 +311,7 @@ public class Player : Character
     #region Hit
     public void Hit()
     {
-        //Neu di vao detect player cua enemy thi se bi push back + drop coin
-        //Khi dang trong spinning thi se attack duoc va khong bi push back -> tuy nhien dung phai enemy thi se tat spinning
+        Die();
     }
     #endregion
 
@@ -312,14 +322,56 @@ public class Player : Character
         ChangeAnim(Constants.ANIM_DEAD);
         rb.AddForce(dieForce * Vector2.up);
         capsuleCol.enabled = !capsuleCol.enabled;
+        lives -= 1;
         Invoke(nameof(OnInit), 1.5f);
     }
+    #endregion
+
+    #region Win + Lose
+    public void Win()
+    {
+        GameManager.Instance.ChangeState(GameState.GameWin);
+        Debug.Log("Win");
+    }
+    public void Lose()
+    {
+        if(lives == 0)
+        {
+            GameManager.Instance.ChangeState(GameState.GameOver);
+            Debug.Log("Lose");
+        }
+    }
+
     #endregion
 
     #region SavePoint
     internal void SavePoint()
     {
         savePoint = transform.position;
+    }
+    #endregion
+
+    #region Monitors
+    public void AddCoins(int amount)
+    {
+        coin += amount;
+    }
+    public void AddLives()
+    {
+        lives += 1;
+    }
+    public void AddSpeedBuff(int speed)
+    {
+        moveSpeed += speed;
+        sprintSpeed += speed;
+        spiningSpeed += speed;
+        Invoke(nameof(ResetSpeedBuff), resetSpeedTimer);
+    }
+    public void ResetSpeedBuff()
+    {
+        spiningSpeed = 1500;
+        sprintSpeed = 1000;
+        moveSpeed = 500;
     }
     #endregion
 
@@ -404,5 +456,13 @@ public class Player : Character
         {
             Die();
         }
+        if (collision.CompareTag(Constants.WIN_BOARD))
+        {
+            Win();
+        }
+    }
+    private void CreateDust()
+    {
+        dust.Play();
     }
 }

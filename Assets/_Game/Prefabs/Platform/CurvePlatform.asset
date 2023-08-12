@@ -14,14 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Angles:
   - m_Start: -121
-    m_End: 89
+    m_End: 239
     m_Order: 0
     m_Sprites:
     - {fileID: -7190719572971877601, guid: 157cbc340d2b7e64ab85168e80e95550, type: 3}
-  - m_Start: 89
-    m_End: 239
-    m_Order: 0
-    m_Sprites: []
   m_FillTexture: {fileID: 0}
   m_CornerSprites:
   - m_CornerType: 0

@@ -5,13 +5,9 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     [SerializeField] private Transform target;
-    private Player player;
+    [SerializeField] private Player player;
     public Vector3 offset;
-    public float speed = 10;
-    private void Awake()
-    {
-        player = target.GetComponent<Player>();
-    }
+    public float speed;
     private void FixedUpdate()
     {
         transform.position = Vector3.Lerp(transform.position, target.position + offset, Time.fixedDeltaTime * speed);

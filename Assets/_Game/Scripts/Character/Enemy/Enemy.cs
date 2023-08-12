@@ -50,7 +50,7 @@ public class Enemy : Character
             Idle();
         }
     }
-    public void ChangeDirection(bool isRight)
+    public virtual void ChangeDirection(bool isRight)
     {
         this.isRight = isRight;
         transform.rotation = isRight ? Quaternion.Euler(Vector3.zero) : Quaternion.Euler(Vector3.up * 180);

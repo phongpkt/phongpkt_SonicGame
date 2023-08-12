@@ -19,17 +19,19 @@ public class Constants
     public const string PLAYER_TAG = "Player";
     public const string DEADZONE = "DeadZone";
     public const string COIN = "Coin";
+    public const string WIN_BOARD = "Win";
 
     //Enemy Tags
     public const string TRAPS = "Traps";
     public const string ENEMY_WALL = "EnemyWalls";
+    //Zombie
     public const string Z_ANIM_IDLE = "Idle";
     public const string Z_ANIM_MOVING = "Moving";
     public const string Z_ANIM_CHASING = "Chasing";
-
+    //Slime
     public const string S_ANIM_IDLE = "Idle";
     public const string S_ANIM_WALK = "Walk";
     public const string S_ANIM_CHASE = "Spin";
-
-
+    //Witch
+    public const string W_ANIM_FLY = "Flying";
 }
