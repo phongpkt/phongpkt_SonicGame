@@ -23,7 +23,13 @@ public class Projectiles : MonoBehaviour
         if (collision.CompareTag(Constants.PLAYER_TAG))
         {
             Player player = Cache.GetPlayer(collision);
-            player.Hit();
+            player.OnHit(20);
+            OnDespawn();
+        }
+        else if (collision.CompareTag(Constants.PLAYER_Gold_TAG))
+        {
+            Player_Golden player = Cache.GetPlayerOnFinalMap(collision);
+            player.OnHit(15);
             OnDespawn();
         }
     }

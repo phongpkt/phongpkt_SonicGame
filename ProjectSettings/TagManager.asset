@@ -10,6 +10,10 @@ TagManager:
   - Traps
   - Enemy
   - Win
+  - Key
+  - IdlePos
+  - PlayerGolden
+  - FinalSceneUI
   layers:
   - Default
   - TransparentFX
@@ -21,7 +25,7 @@ TagManager:
   - Player
   - HighGround
   - Enemy
-  - 
+  - Projectile
   - 
   - 
   - 

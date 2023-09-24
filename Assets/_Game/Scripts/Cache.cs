@@ -38,5 +38,24 @@ public class Cache
         return m_Player[key];
     }
 
+    private static Dictionary<Collider2D, Player_Golden> m_PlayerOnFinalMap = new Dictionary<Collider2D, Player_Golden>();
+    public static Player_Golden GetPlayerOnFinalMap(Collider2D key)
+    {
+        if (!m_PlayerOnFinalMap.ContainsKey(key))
+        {
+            Player_Golden player = key.GetComponent<Player_Golden>();
+
+            if (player != null)
+            {
+                m_PlayerOnFinalMap.Add(key, player);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        return m_PlayerOnFinalMap[key];
+    }
+
 }
 

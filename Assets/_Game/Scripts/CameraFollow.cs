@@ -4,28 +4,39 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] private Transform target;
-    [SerializeField] private Player player;
-    public Vector3 offset;
-    public float speed;
-    private void FixedUpdate()
-    {
-        transform.position = Vector3.Lerp(transform.position, target.position + offset, Time.fixedDeltaTime * speed);
-        if (player.IsDucking())
-        {
-            CameraDucking();
-        }
-        if (player.IsLookUp())
-        {
-            CameraLookUp();
-        }
-    }
-    private void CameraDucking()
-    {
-        transform.position = Vector3.Lerp(transform.position, target.position + new Vector3(0, -2), Time.fixedDeltaTime * speed);
-    }
-    private void CameraLookUp()
-    {
-        transform.position = Vector3.Lerp(transform.position, target.position + new Vector3(0, 6), Time.fixedDeltaTime * speed);
-    }
+    //[SerializeField] private Player player;
+    //[SerializeField] private Cinemachine.CinemachineVirtualCameraBase cam;
+    //private float timer = 0;
+    //private float maxTime= 3f;
+
+    //private void FixedUpdate()
+    //{
+    //    if (player.IsDucking())
+    //    {
+    //        CameraDucking();
+    //    }
+    //    if (player.IsLookUp())
+    //    {
+    //        CameraLookUp();
+    //    }
+    //    else
+    //    {
+    //        timer = 0;
+    //    }
+    //}
+    //public void CameraDucking()
+    //{
+    //    timer += Time.fixedDeltaTime;
+    //    if (timer > maxTime)
+    //    {
+    //        cam.
+    //    }
+    //}
+    //public void CameraLookUp()
+    //{
+    //    timer += Time.fixedDeltaTime;
+    //    if(timer > maxTime)
+    //    {
+    //    }
+    //}
 }

@@ -9,15 +9,9 @@ public class Turret : MonoBehaviour
 
     public float fireRate;
     private float nextFireFrame;
-
-    private Transform target;
     private void Awake()
     {
         fireRate = 3f;
-    }
-    private void Start()
-    {
-        target = GameObject.FindGameObjectWithTag(Constants.PLAYER_TAG).transform;
     }
     private void Update()
     {

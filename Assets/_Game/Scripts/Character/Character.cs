@@ -20,12 +20,14 @@ public class Character : MonoBehaviour
     public virtual void OnDespawn()
     {
         gameObject.SetActive(false);
-        Invoke(nameof(OnInit), 1f);
+        Invoke(nameof(OnInit), 2f);
     }
     public virtual void OnDeath()
     {
        OnDespawn();
     }
+    public virtual void OnHit(int damage) { }
+
     #region Animation
     protected void ChangeAnim(string animName)
     {
@@ -36,6 +38,5 @@ public class Character : MonoBehaviour
             anim.SetTrigger(currentAnim);
         }
     }
-
     #endregion
 }

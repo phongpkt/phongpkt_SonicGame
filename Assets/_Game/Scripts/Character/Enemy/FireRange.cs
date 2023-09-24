@@ -8,14 +8,10 @@ public class FireRange : MonoBehaviour
     [SerializeField] private Transform bulletSpawner;
 
     [SerializeField] private float attackRange;
-    public float fireRate;
+    [SerializeField] private float fireRate;
     private float nextFireFrame;
 
     private Transform target;
-    private void Awake()
-    {
-        fireRate = 3f;
-    }
     private void Start()
     {
         target = GameObject.FindGameObjectWithTag(Constants.PLAYER_TAG).transform;

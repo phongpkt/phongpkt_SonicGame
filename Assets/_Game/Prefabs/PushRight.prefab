@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8058693978942247251}
   - component: {fileID: 8058693978942247260}
   - component: {fileID: 8058693978942247261}
-  - component: {fileID: 8058693978942247262}
+  - component: {fileID: 7443915018651338868}
   m_Layer: 0
   m_Name: PushRight
   m_TagString: Untagged
@@ -26,14 +26,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8058693978942247250}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 220.3, y: 6.83, z: 0}
   m_LocalScale: {x: 0.5, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!212 &8058693978942247260
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -99,7 +99,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.15, y: 0.05}
+  m_Offset: {x: 0.73349166, y: 0.035276353}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -110,9 +110,9 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.5, y: 1}
+  m_Size: {x: 0.73301655, y: 1.0294473}
   m_EdgeRadius: 0
---- !u!114 &8058693978942247262
+--- !u!114 &7443915018651338868
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -121,7 +121,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8058693978942247250}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f7bdd65915e81a4a83d6195aa73edf3, type: 3}
+  m_Script: {fileID: 11500000, guid: e00adeb562290114b92272fe45dbd966, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pushForce: 20
+  bounceForce: 30

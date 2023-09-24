@@ -11,5 +11,9 @@ public class JumpPad : MonoBehaviour
         {
             collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.up * bounceForce, ForceMode2D.Impulse);
         }
+        else if (collision.gameObject.CompareTag(Constants.PLAYER_Gold_TAG))
+        {
+            collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.up * bounceForce, ForceMode2D.Impulse);
+        }
     }
 }
