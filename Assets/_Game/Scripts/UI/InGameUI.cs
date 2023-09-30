@@ -13,7 +13,7 @@ public class InGameUI : MonoBehaviour
     [SerializeField] private TMP_Text coinsText;
     [SerializeField] private TMP_Text livesText;
     [SerializeField] private TMP_Text timesText;
-    private string currentTime;
+    [HideInInspector] public string currentTime;
     private float secondsCount;
     private int minuteCount;
     
@@ -27,6 +27,8 @@ public class InGameUI : MonoBehaviour
 
     private void OnEnable()
     {
+        secondsCount = 0;
+        minuteCount = 0;
         jumpBtn.onClick.AddListener(JumpEvent);
         SprintEvent();
         SpinEvent();

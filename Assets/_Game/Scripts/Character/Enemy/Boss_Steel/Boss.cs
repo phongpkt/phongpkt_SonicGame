@@ -174,8 +174,8 @@ public class Boss : Character
      {
         isDead = true;
         ChangeAnim(Constants.B_ANIM_DIE);
+        GameManager.Instance.ChangeState(GameState.GameWin);
         rb.velocity = Vector2.zero;
-        OnDeath();
     }
     #endregion
 

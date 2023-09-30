@@ -16,23 +16,23 @@ public class Player : Character
 
     //Velocity
     private float currentSpeed;
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private float sprintSpeed;
-    [SerializeField] private float spiningSpeed;
+    private float moveSpeed;
+    private float sprintSpeed;
+    private float spiningSpeed;
     private float jumpForce;
     private float pushbackForce;
     private float dieForce;
 
     //Movement
-    [SerializeField] private float horizontal;
-    [SerializeField] private float vertical;
+    private float horizontal;
+    private float vertical;
 
     //Character bool
-    public bool isSpining;
+    [HideInInspector] public bool isSpining;
     private bool isGrounded;
     private bool isJumping;
     private bool isSprinting;
-    [SerializeField] private bool isOnSlope;
+    private bool isOnSlope;
 
     //Slope
     [SerializeField] private PhysicsMaterial2D fullFriction;
@@ -45,8 +45,8 @@ public class Player : Character
 
     //Savepoint + Coins + Lives
     private Vector3 savePoint;
-    public int coin = 0;
-    public int lives = 3;
+    [HideInInspector] public int coin = 0;
+    [HideInInspector] public int lives = 3;
     private float resetSpeedTimer = 10f;
 
     private void Awake()
@@ -73,8 +73,6 @@ public class Player : Character
     }
     private void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");
-        vertical = Input.GetAxisRaw("Vertical");
         isGrounded = CheckGrounded();
         //check alive
         if (isDead)
@@ -87,12 +85,6 @@ public class Player : Character
         {
             if (isGrounded)
             {
-                //jump
-                if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    Jump();
-                    return;
-                }
                 //crouch
                 if (vertical < 0f)
                 {
@@ -292,13 +284,14 @@ public class Player : Character
     #region Win + Lose
     public void Win()
     {
-        GameManager.Instance.ChangeState(GameState.GameWin);
+        PlayerPrefs.SetInt("coin", coin);
+        GameManager.Instance.ChangeState(GameState.ChangeLevel);
     }
     public void Lose()
     {
         if(lives == 0)
         {
-            Destroy(this.gameObject, 1f);
+            PlayerPrefs.SetInt("coin", coin);
             GameManager.Instance.ChangeState(GameState.GameOver);
         }
     }
@@ -340,7 +333,6 @@ public class Player : Character
     private bool CheckGrounded()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.1f, groundLayer);
-        //Debug.DrawRay(hit.point, hit.normal, Color.green);
         return hit.collider != null;
     }
     private void CheckSlope()
@@ -354,9 +346,6 @@ public class Player : Character
         Vector2 checkPos = transform.position - (Vector3)(new Vector2(0.0f, capsuleColliderSize.y / 2));
         RaycastHit2D slopeHitFront = Physics2D.Raycast(checkPos, transform.right, 1.1f, groundLayer);
         RaycastHit2D slopeHitBack = Physics2D.Raycast(checkPos, -transform.right, 1.1f, groundLayer);
-
-        //Debug.DrawRay(slopeHitFront.point, slopeHitFront.normal, Color.red);
-        //Debug.DrawRay(slopeHitBack.point, slopeHitBack.normal, Color.blue);
 
         if (slopeHitFront)
         {
@@ -391,8 +380,6 @@ public class Player : Character
             }
 
             lastSlopeAngle = slopeDownAngle;
-            //Debug.DrawRay(hit.point, slopeNormalPerp, Color.blue);
-            //Debug.DrawRay(hit.point, hit.normal, Color.green);
         }
         if (isOnSlope && horizontal == 0.0f)
         {
@@ -410,7 +397,6 @@ public class Player : Character
         {
             coin++;
             Destroy(collision.gameObject);
-            PlayerPrefs.SetInt("coin", coin);
         }
         if (collision.CompareTag(Constants.DEADZONE))
         {

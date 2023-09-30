@@ -34,14 +34,14 @@ public class Player_Golden : Character
     //Timer
     private float secondsCount;
 
-    //UI
-    [SerializeField]private BossFightUI infoUI;
-
     //Attack
     private float cooldown = 0.35f;
     private int maxCombo = 2;
     private int comboAttack = 0;
     private float attackTimer;
+
+    //UI
+    [SerializeField]private BossFightUI infoUI;
 
     public override void OnInit()
     {
@@ -95,14 +95,20 @@ public class Player_Golden : Character
             if (isSkill)
             {
                 UpdateEnergy();
+                moveSpeed = 300;
                 SkillAttack();
                 return;
             }
             //Spinning
-            if (isSpining) //#TODO: tang speed luc spin
+            if (isSpining)
             {
                 Spining();
+                moveSpeed = 700;
                 return;
+            }
+            if (!isSpining)
+            {
+                moveSpeed = 500;
             }
             if (isAttack)
             {

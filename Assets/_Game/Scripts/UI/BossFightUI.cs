@@ -8,10 +8,8 @@ using static UnityEngine.EventSystems.EventTrigger;
 public class BossFightUI : MonoBehaviour
 {
     public Player_Golden player;
-    
     public Slider bossHealthBar;
     public Slider playerHealthBar;
-
     [SerializeField] private Button jumpBtn;
     [SerializeField] private Button skillBtn;
     [SerializeField] private Button attackBtn;
@@ -24,7 +22,6 @@ public class BossFightUI : MonoBehaviour
         jumpBtn.onClick.AddListener(JumpEvent);
         attackBtn.onClick.AddListener(AttackEvent);
         skillBtn.onClick.AddListener(SkillEvent);
-
         SpinEvent();
         LeftEvent();
         RightEvent();
@@ -35,6 +32,28 @@ public class BossFightUI : MonoBehaviour
         attackBtn.onClick.RemoveAllListeners();
         skillBtn.onClick.RemoveAllListeners();
     }
+
+    #region Health
+    public void SetBossMaxHealth(int health)
+    {
+        bossHealthBar.maxValue = health;
+        bossHealthBar.value = health;
+    } 
+    public void SetBossHealth(int health)
+    {
+        bossHealthBar.value = health;
+    }
+    public void SetPlayerMaxHealth(int health)
+    {
+        playerHealthBar.maxValue = health;
+        playerHealthBar.value = health;
+    }
+
+    public void SetPlayerHealth(int health)
+    {
+        playerHealthBar.value = health;
+    }
+    #endregion
 
     #region JumpEvent
     void JumpEvent()
@@ -132,25 +151,4 @@ public class BossFightUI : MonoBehaviour
     }
     #endregion
 
-    #region Health
-    public void SetBossMaxHealth(int health)
-    {
-        bossHealthBar.maxValue = health;
-        bossHealthBar.value = health;
-    } 
-    public void SetBossHealth(int health)
-    {
-        bossHealthBar.value = health;
-    }
-    public void SetPlayerMaxHealth(int health)
-    {
-        playerHealthBar.maxValue = health;
-        playerHealthBar.value = health;
-    }
-
-    public void SetPlayerHealth(int health)
-    {
-        playerHealthBar.value = health;
-    }
-    #endregion
 }

@@ -4,15 +4,6 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    //[SerializeField] private GameObject inGameUI;
-    //[SerializeField] private GameObject mainMenuUI;
-    //[SerializeField] private GameObject bossFightUI;
-    //[SerializeField] private GameObject winUI;
-    //[SerializeField] private GameObject loseUI;
-    //[SerializeField] private GameObject settingUI;
-    //[SerializeField] private GameObject scoreboardUI;
-    //[SerializeField] private GameObject chooseCharacterUI;
-
     [SerializeField] private GameObject openScenceUI;
     private GameObject currentUI;
 
@@ -27,4 +18,5 @@ public class UIManager : MonoBehaviour
         currentUI = _currentUI;
         currentUI.SetActive(true);
     }
+
 }

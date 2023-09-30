@@ -12,7 +12,7 @@ public class SpikeTrap : MonoBehaviour
             Player player = Cache.GetPlayer(collision);
             if(player.isDead == false)
             {
-                player.Die();
+                player.OnHit(10);
             }
         }
     }
