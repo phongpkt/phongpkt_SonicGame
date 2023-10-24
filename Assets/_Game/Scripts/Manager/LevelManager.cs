@@ -1,6 +1,8 @@
 using Cinemachine;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class LevelManager : Singleton<LevelManager>
 {
@@ -23,14 +25,13 @@ public class LevelManager : Singleton<LevelManager>
     public GameObject bossPrefab;
     public GameObject[] playerPrefabs;
     private GameObject boss;
-    [SerializeField] private GameObject player;
+    [SerializeField] private Player player;
     private Transform bossTF;
     private Transform playerTF;
     private int characterIndex;
     private Vector3 bossPos = new Vector3(130f, 50f, 0);
 
     //UI
-    private UIManager UIManager;
     [SerializeField] private InGameUI inGameUI;
     [SerializeField] private LeaderboardUI leaderboardUI;
     [SerializeField] private BossFightUI bossScenceUI;
@@ -40,30 +41,37 @@ public class LevelManager : Singleton<LevelManager>
     private void Awake()
     {
         OnInit();
+        finalScenceCam.SetActive(false);
     }
     private void OnInit()
     {
         levelIndex = 0;
         mainCam = GameObject.FindGameObjectWithTag("MainCamera");
         finalScenceCam = GameObject.FindGameObjectWithTag("FinalScenceCamera");
-        UIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
-        finalScenceCam.SetActive(false);
     }
     private void Update()
     {
         OnFinishLevel();
+    }
+    public void OnPlayerDied()
+    {
+        PlayerPrefs.SetInt("coin", player.coin);
+        GameManager.Instance.ChangeState(GameState.GameOver);
         OnLose();
-        OnWin();
     }
     public void OnPlay()
     {
         GameManager.Instance.ChangeState(GameState.GamePlay);
         characterIndex = PlayerPrefs.GetInt("SelectedCharacter");
         ActiveLevel(levelIndex);
-        player = Instantiate(playerPrefabs[characterIndex], level1_StartingPosition, Quaternion.identity);
-        playerTF = player.transform;
-        vCam.m_Follow = player.transform;
-        inGameUI.player = player.GetComponent<Player>();
+        GameObject temp = PhotonNetwork.Instantiate(playerPrefabs[characterIndex].name, level1_StartingPosition, Quaternion.identity);
+        player = temp.GetComponent<Player>();
+        if(player != null)
+        {
+            playerTF = temp.transform;
+            vCam.m_Follow = temp.transform;
+            inGameUI.player = player;
+        }
         SoundManager.Instance.PlayIngameSound();
     }
     public void Replay()
@@ -73,30 +81,36 @@ public class LevelManager : Singleton<LevelManager>
         mainCam.SetActive(true);
         OnPlay();
     }
-    public void ChangeStateToMainMenu()
-    {
-        GameManager.Instance.ChangeState(GameState.MainMenu);
-    }
     private void OnLose()
     {
-        if(GameManager.Instance.IsState(GameState.GameOver))
+        if (GameManager.Instance.IsState(GameState.GameOver))
         {
             SoundManager.Instance.StopIngameSound();
             SoundManager.Instance.StopBossFightSound();
             SoundManager.Instance.PlayWhenLose();
 
-            Destroy(player);
+            Destroy(player.gameObject);
             DeactiveLevel();
             playerTF = null;
             vCam.m_Follow = null;
             inGameUI.player = null;
-            UIManager.ChangeUI(loseUI);
+            UIManager.Instance.ChangeUI(loseUI);
 
             //Save score
-            int coins = PlayerPrefs.GetInt("coin");
-            HighscoreEntryBase highscoreEntry = new HighscoreEntryBase(inGameUI.currentTime, coins);
-            leaderboardUI.highscoreEntryList.Add(highscoreEntry);
-            GameManager.Instance.ChangeState(GameState.GamePause);
+            //int coin = PlayerPrefs.GetInt("coin");
+            //string time = inGameUI.currentTime;
+            leaderboardUI.AddHighScoreEntry(inGameUI.currentTime, PlayerPrefs.GetInt("coin"));
+
+            //GameManager.Instance.ChangeState(GameState.GamePause);
+        }
+    }
+    public void Victory(Boss b)
+    {
+        if (b.isDead)
+        {
+            PlayerPrefs.SetInt("coin", player.coin);
+            GameManager.Instance.ChangeState(GameState.GameWin);
+            OnWin();
         }
     }
     private void OnWin()
@@ -107,18 +121,18 @@ public class LevelManager : Singleton<LevelManager>
             SoundManager.Instance.StopBossFightSound();
             SoundManager.Instance.PlayWhenWin();
 
-            Destroy(player);
+            Destroy(player.gameObject);
             DeactiveLevel();
             playerTF = null;
             vCam.m_Follow = null;
             inGameUI.player = null;
-            UIManager.ChangeUI(winUI);
+            UIManager.Instance.ChangeUI(winUI);
 
             //Save score
-            int coins = PlayerPrefs.GetInt("coin");
-            HighscoreEntryBase highscoreEntry = new HighscoreEntryBase(inGameUI.currentTime, coins);
-            leaderboardUI.highscoreEntryList.Add(highscoreEntry);
-            GameManager.Instance.ChangeState(GameState.GamePause);
+            int coin = PlayerPrefs.GetInt("coin");
+            string time = inGameUI.currentTime;
+            leaderboardUI.AddHighScoreEntry(time, coin);
+            //GameManager.Instance.ChangeState(GameState.GamePause);
         }
     }
     private void ActiveLevel(int level)
@@ -157,14 +171,19 @@ public class LevelManager : Singleton<LevelManager>
         SoundManager.Instance.StopIngameSound();
         SoundManager.Instance.PlayBossFightSound();
 
-        Destroy(player);
-        player = Instantiate(playerPrefabs[2], level3_StartingPosition, Quaternion.identity);
-        playerTF = player.transform;
+        Destroy(player.gameObject);
+        GameObject golden = PhotonNetwork.Instantiate(playerPrefabs[2].name, level3_StartingPosition, Quaternion.identity);
+        Player_Golden p = golden.GetComponent<Player_Golden>();
+
+        if (p != null) 
+        {
+            playerTF = golden.transform;
+            bossScenceUI.player = p;
+        }
 
         boss = Instantiate(bossPrefab, bossPos, Quaternion.identity);
         bossTF = boss.transform;
-        UIManager.ChangeUI(bossScenceUI.gameObject);
-        bossScenceUI.player = player.GetComponent<Player_Golden>();
+        UIManager.Instance.ChangeUI(bossScenceUI.gameObject);
 
         mainCam.SetActive(false);
         finalScenceCam.SetActive(true);

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.U2D.Path;
 using UnityEngine;
 
 public class Boss : Character
@@ -174,8 +173,8 @@ public class Boss : Character
      {
         isDead = true;
         ChangeAnim(Constants.B_ANIM_DIE);
-        GameManager.Instance.ChangeState(GameState.GameWin);
         rb.velocity = Vector2.zero;
+        LevelManager.Instance.Victory(this);
     }
     #endregion
 

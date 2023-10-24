@@ -4,6 +4,7 @@ using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.Windows;
 using Input = UnityEngine.Input;
+using Photon.Pun;
 
 public class Player : Character
 {
@@ -45,9 +46,11 @@ public class Player : Character
 
     //Savepoint + Coins + Lives
     private Vector3 savePoint;
-    [HideInInspector] public int coin = 0;
-    [HideInInspector] public int lives = 3;
+    [HideInInspector] public int coin;
+    [HideInInspector] public int lives;
     private float resetSpeedTimer = 10f;
+
+    private PhotonView view;
 
     private void Awake()
     {
@@ -61,6 +64,9 @@ public class Player : Character
     private void Start()
     {
         capsuleColliderSize = capsuleCol.size;
+        view = GetComponent<PhotonView>();
+        lives = 1;
+        coin = 0;
     }
     public override void OnInit()
     {
@@ -73,63 +79,71 @@ public class Player : Character
     }
     private void Update()
     {
-        isGrounded = CheckGrounded();
-        //check alive
-        if (isDead)
+        if (view.IsMine)
         {
-            horizontal = 0;
-            Lose();
-            return;
-        }
-        else
-        {
-            if (isGrounded)
+            horizontal = Input.GetAxisRaw("Horizontal");
+            vertical = Input.GetAxisRaw("Vertical");
+            isGrounded = CheckGrounded();
+            //check alive
+            if (isDead)
             {
-                //crouch
-                if (vertical < 0f)
-                {
-                    Ducking();
-                    return;
-                }
-                //lookup
-                if (vertical > 0f)
-                {
-                    LookUp();
-                    return;
-                }
-                //run
-                if (Mathf.Abs(horizontal) > 0.1f)
-                {
-                    CreateDust();
-                    if (!isSprinting && !isSpining)
-                    {
-                        currentSpeed = moveSpeed;
-                        ChangeAnim(Constants.ANIM_RUN);
-                    }
-                    else if (isSprinting && !isSpining)
-                    {
-                        currentSpeed = sprintSpeed;
-                        ChangeAnim(Constants.ANIM_SPRINT);
-                    }
-                    else if (!isSprinting && isSpining)
-                    {
-                        currentSpeed = spiningSpeed;
-                        ChangeAnim(Constants.ANIM_SPIN);
-                    }
-                }
-                //idle
-                if (Mathf.Abs(horizontal) == 0 && !isJumping && !isSprinting)
-                {
-                    Idle();
-                    return;
-                }
+                horizontal = 0;
+                return;
             }
             else
             {
-                //falling
-                if (rb.velocity.y < 0)
+                if (isGrounded)
                 {
-                    Falling();
+                    if (isJumping)
+                    {
+                        return;
+                    }
+                    //crouch
+                    if (vertical < 0f)
+                    {
+                        Ducking();
+                        return;
+                    }
+                    //lookup
+                    if (vertical > 0f)
+                    {
+                        LookUp();
+                        return;
+                    }
+                    //run
+                    if (Mathf.Abs(horizontal) > 0.1f)
+                    {
+                        CreateDust();
+                        if (!isSprinting && !isSpining)
+                        {
+                            currentSpeed = moveSpeed;
+                            ChangeAnim(Constants.ANIM_RUN);
+                        }
+                        else if (isSprinting && !isSpining)
+                        {
+                            currentSpeed = sprintSpeed;
+                            ChangeAnim(Constants.ANIM_SPRINT);
+                        }
+                        else if (!isSprinting && isSpining)
+                        {
+                            currentSpeed = spiningSpeed;
+                            ChangeAnim(Constants.ANIM_SPIN);
+                        }
+                    }
+                    //idle
+                    if (Mathf.Abs(horizontal) == 0 && !isJumping && !isSprinting)
+                    {
+                        Idle();
+                        return;
+                    }
+                }
+                else
+                {
+                    //falling
+                    if (rb.velocity.y < 0)
+                    {
+                        Falling();
+                    }
                 }
             }
         }
@@ -220,9 +234,9 @@ public class Player : Character
     }
     public bool IsDucking()
     {
-        if(vertical < 0 && isGrounded)
+        if (vertical < 0 && isGrounded)
         {
-            return true; 
+            return true;
         }
         else
         {
@@ -253,7 +267,7 @@ public class Player : Character
     #endregion
 
     #region Idle
-    public void Idle ()
+    public void Idle()
     {
         isSpining = false;
         isSprinting = false;
@@ -276,26 +290,16 @@ public class Player : Character
         ChangeAnim(Constants.ANIM_DEAD);
         rb.AddForce(dieForce * Vector2.up);
         capsuleCol.enabled = !capsuleCol.enabled;
-        lives -= 1;
-        Invoke(nameof(OnInit), 1.5f);
-    }
-    #endregion
-
-    #region Win + Lose
-    public void Win()
-    {
-        PlayerPrefs.SetInt("coin", coin);
-        GameManager.Instance.ChangeState(GameState.ChangeLevel);
-    }
-    public void Lose()
-    {
-        if(lives == 0)
+        if(lives == 1)
         {
-            PlayerPrefs.SetInt("coin", coin);
-            GameManager.Instance.ChangeState(GameState.GameOver);
+            LevelManager.Instance.OnPlayerDied();
+        }
+        else
+        {
+            lives -= 1;
+            Invoke(nameof(OnInit), 1.5f);
         }
     }
-
     #endregion
 
     #region SavePoint
@@ -355,7 +359,7 @@ public class Player : Character
         else if (slopeHitBack)
         {
             isOnSlope = true;
-            slopeSideAngle = Vector2.Angle(slopeHitBack.normal, Vector2.up);;
+            slopeSideAngle = Vector2.Angle(slopeHitBack.normal, Vector2.up); ;
         }
         else
         {
@@ -391,6 +395,7 @@ public class Player : Character
         }
     }
     #endregion
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(Constants.COIN))
@@ -404,7 +409,7 @@ public class Player : Character
         }
         if (collision.CompareTag(Constants.WIN_BOARD))
         {
-            Win();
+            GameManager.Instance.ChangeState(GameState.ChangeLevel);
         }
         if (collision.CompareTag(Constants.KEY))
         {

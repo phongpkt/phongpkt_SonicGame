@@ -11,7 +11,10 @@ public class SoundManager : Singleton<SoundManager>
     [SerializeField] private AudioSource winSource;
 
     [SerializeField] private AudioSource btn_ClickSource;
-
+    private void Start()
+    {
+        AudioListener.volume = PlayerPrefs.GetFloat("musicVolume");
+    }
     public void PlayIngameSound()
     {
         inGameSource.Play();

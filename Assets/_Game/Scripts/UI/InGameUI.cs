@@ -29,13 +29,16 @@ public class InGameUI : MonoBehaviour
     {
         secondsCount = 0;
         minuteCount = 0;
-        jumpBtn.onClick.AddListener(JumpEvent);
-        SprintEvent();
-        SpinEvent();
-        LeftEvent();
-        RightEvent();
-        UpEvent();
-        DownEvent();
+        if (player != null)
+        {
+            jumpBtn.onClick.AddListener(JumpEvent);
+            SprintEvent();
+            SpinEvent();
+            LeftEvent();
+            RightEvent();
+            UpEvent();
+            DownEvent();
+        }
     }
     private void OnDisable()
     {
@@ -43,10 +46,13 @@ public class InGameUI : MonoBehaviour
     }
     private void Update()
     {
-        UpdateTimerUI();
-        coinsText.SetText(player.coin.ToString());
-        livesText.SetText(player.lives.ToString());
-        timesText.SetText(currentTime);
+        if (player != null)
+        {
+            UpdateTimerUI();
+            coinsText.SetText(player.coin.ToString());
+            livesText.SetText(player.lives.ToString());
+            timesText.SetText(currentTime);
+        }
     }
     public void UpdateTimerUI()
     {
